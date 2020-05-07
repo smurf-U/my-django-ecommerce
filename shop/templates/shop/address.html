@@ -1,0 +1,48 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block content %}
+<div id="shipping-info">
+    <hr>
+    <p>Invoice Information: <a href="/addressInvoice/add" class="btn btn-link">Add</a></p>
+    {% if order.invoice_address_id.is_address_set %}
+        <div class="card">
+            <div class="card-body">
+                <a href="/address/{{order.invoice_address_id.id}}/edit" class="btn btn-link float-right">Edit</a> 
+                <span class="address">
+                    {{order.invoice_address_id.name}}
+                    <br/>
+                    {{order.invoice_address_id.full_address}}
+                    <br/>
+                    <a href="mailto:{{order.invoice_address_id.email}}">{{order.invoice_address_id.email}}</a>
+                    <br/>
+                    {{order.invoice_address_id.mobile}}
+                </span>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div id="shipping-info">
+    <hr>
+    <p>Shipping Information: <a href="#change_address" class="btn btn-link">Change</a></p>
+    {% for ship in request.user.customer.getChild %}
+        {% if ship.tyep == 'delivery' %}
+        <div class="card {{class}} {% if order.shipping_address_id == ship %} active {% endif %}">
+            <div class="card-body">
+                <a href="/address/{{ship.id}}/edit" class="btn btn-link float-right">Edit</a>
+                <span class="address">
+                    {{ship.parent_id.name}}, 
+                    {{ship.name}}
+                    <br/>
+                    {{ship.full_address}}
+                    <br/>
+                    <a href="mailto:{{ship.email}}">{{ship.email}}</a>
+                    <br/>
+                    {{ship.mobile}}
+                </span>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock content %}

@@ -1,0 +1,49 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+	<div class="col-lg-12">
+		<div class="box-element">
+            <a  class="btn btn-outline-dark" href="{% url 'shop' %}">&#x2190; Continue Shopping</a>
+            <br>
+            <br>
+            <table class="table">
+                <tr>
+                    <th><h5>Items: <strong>{{order.getQuantity}}</strong></h5></th>
+                    <th><h5>Total:<strong> ${{order.getTotal|floatformat:2}}</strong></h5></th>
+                    <th>
+                        <a  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
+                    </th>
+                </tr>
+            </table>
+		</div>
+
+		<br>
+		<div class="box-element">
+            <div class="cart-row">
+                <div style="flex:2"></div>
+                <div style="flex:2"><strong>Item</strong></div>
+                <div style="flex:1"><strong>Price</strong></div>
+                <div style="flex:1"><strong>Quantity</strong></div>
+                <div style="flex:1"><strong>Total</strong></div>
+            </div>
+            
+            {% for line in lines %}
+            <div class="cart-row">
+                <div style="flex:2"><img class="row-image" src="{{line.product_id.imageURL}}"></div>
+                <div style="flex:2"><p>{{line.product_id.name}}</p></div>
+                <div style="flex:1"><p>${{line.unit_price|floatformat:2}}</p></div>
+                <div style="flex:1">
+                    <p class="quantity">{{line.product_qty|floatformat:2}}</p>
+                    <div class="quantity">
+                        <img class="chg-quantity update-cart" data-product="{{line.product_id.id}}" data-action="add" src="{% static  'images/arrow-up.png' %}">
+                
+                        <img class="chg-quantity update-cart" data-product="{{line.product_id.id}}" data-action="remove" src="{% static  'images/arrow-down.png' %}">
+                    </div>
+                </div>
+                <div style="flex:1"><p>${{line.getTotal|floatformat:2}}</p></div>
+            </div>
+            {% endfor %}
+	</div>
+</div>
+{% endblock content %}

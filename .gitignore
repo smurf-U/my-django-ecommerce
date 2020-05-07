@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+my_dj_ecom
+!filestore/static
+filestore/static/*
+filestore/*
+
 # C extensions
 *.so
 
