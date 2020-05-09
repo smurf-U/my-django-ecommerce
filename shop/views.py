@@ -20,15 +20,14 @@ def checkout(request):
     context = getCart(request)
     return render(request, 'shop/checkout.html', context)
 
-# def address(request):
-#     context = getCart(request)
-#     return render(request, 'shop/address.html', context)
+def checkoutAddress(request):
+    context = getCart(request)
+    return render(request, 'shop/address.html', context)
 
 def updateAddress(request, id):
     context = getCart(request)
     customer = get_object_or_404(Customer, pk=id)
     if request.method == "POST":
-        print(request.POST.dict(), dir(request))
         form = AddressForm(request.POST, instance=customer)
         if form.is_valid():
             customer = form.save(commit=False)
@@ -87,6 +86,19 @@ def updateCart(request, **kwarg):
     orderline.save()
     if orderline.product_qty <= 0:
         orderline.delete()
+    return JsonResponse('', safe=False)
+
+def updateOrderAddress(request, **kwarg):
+    data = json.loads(request.body)
+    customer = request.user.customer
+    newAddress = Customer.objects.get(id=int(data.get('addressId')))
+    order, created = Order.objects.get_or_create(customer_id=customer, state='draft')
+    if data.get('type') == 'ship':
+        print(newAddress)
+        order.shipping_address_id = newAddress
+    else:
+        order.invoice_address_id = newAddress
+    order.save()
     return JsonResponse('', safe=False)
 
 def getCart(request):

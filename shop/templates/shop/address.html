@@ -1,48 +1,217 @@
 {% extends 'shop/base.html' %}
 {% load static %}
 {% block content %}
-<div id="shipping-info">
-    <hr>
-    <p>Invoice Information: <a href="/addressInvoice/add" class="btn btn-link">Add</a></p>
-    {% if order.invoice_address_id.is_address_set %}
-        <div class="card">
-            <div class="card-body">
-                <a href="/address/{{order.invoice_address_id.id}}/edit" class="btn btn-link float-right">Edit</a> 
-                <span class="address">
-                    {{order.invoice_address_id.name}}
-                    <br/>
-                    {{order.invoice_address_id.full_address}}
-                    <br/>
-                    <a href="mailto:{{order.invoice_address_id.email}}">{{order.invoice_address_id.email}}</a>
-                    <br/>
-                    {{order.invoice_address_id.mobile}}
-                </span>
-            </div>
-        </div>
-    {% endif %}
-</div>
+<div class="row">
+    <div class="col-lg-8">
+        <div class="box-element row" id="form-wrapper">
+            <div class="col-12">
+            <form id="form">
+                <!-- <div id="user-info">
+                    <div class="form-field">
+                        <input required class="form-control" value="{{order.customer_id.name}}" type="text" name="name" placeholder="Name..">
+                    </div>
+                    <div class="form-field">
+                        {% if order.customer_id %}
+                        <input required class="form-control" type="email" readonly="True" value="{{order.customer_id.email}}" name="email" placeholder="Email..">
+                        {% else %}
+                        <input required class="form-control" type="email" value="{{order.customer_id.email}}" name="email" placeholder="Email..">
+                        {% endif %}
+                    </div>
+                    {% if not order.shipping_address_id.is_address_set %}
+                    <div class="form-field">
+                        <input class="form-control" type="text" value="{{order.customer_id.street}}" name="street" placeholder="Street..">
+                    </div>
+                    <div class="form-field">
+                        <input class="form-control" type="text" value="{{order.customer_id.street2}}" name="street2" placeholder="Street2..">
+                    </div>
+                    <div class="form-field">
+                        <input class="form-control" type="text" value="{{order.customer_id.city}}" name="city" placeholder="City..">
+                    </div>
+                    <div class="form-field">
+                        <input class="form-control" type="text" value="{{order.customer_id.state}}"name="state" placeholder="State..">
+                    </div>
+                    <div class="form-field">
+                        <input class="form-control" type="text" value="{{ordercustomer_id.zipcode}}" name="zipcode" placeholder="Zip code..">
+                    </div>
+                    <div class="form-field">
+                        <input class="form-control" type="text" value="{{order.customer_id.country}}" name="country" placeholder="Country..">
+                    </div>
+                    <div class="form-field">
+                        <input class="form-control" type="text" value="{{order.customer_id.mobile}}" name="mobile" placeholder="Mobile..">
+                    </div>
+                    {% endif %}
+                </div> -->
 
-<div id="shipping-info">
-    <hr>
-    <p>Shipping Information: <a href="#change_address" class="btn btn-link">Change</a></p>
-    {% for ship in request.user.customer.getChild %}
-        {% if ship.tyep == 'delivery' %}
-        <div class="card {{class}} {% if order.shipping_address_id == ship %} active {% endif %}">
-            <div class="card-body">
-                <a href="/address/{{ship.id}}/edit" class="btn btn-link float-right">Edit</a>
-                <span class="address">
-                    {{ship.parent_id.name}}, 
-                    {{ship.name}}
-                    <br/>
-                    {{ship.full_address}}
-                    <br/>
-                    <a href="mailto:{{ship.email}}">{{ship.email}}</a>
-                    <br/>
-                    {{ship.mobile}}
-                </span>
-            </div>
+                <div id="shipping-info" class="row">
+                    <div class="col-12">
+                        <b>Invoice Information: </b>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            
+                            {% for invoice in request.user.customer.getChild %}
+                                {% if invoice.type == 'invoice' %}
+                                <div class="col-6 mt-2">
+                                    <div data-address_type="invoice" data-address_id="{{invoice.id}}" class="card border {% if order.invoice_address_id == invoice %} border-primary {% else %} js_change_shipping  {% endif %}">
+                                        <div class="card-body">
+                                            <a href="/address/{{invoice.id}}/edit" class="btn btn-link float-right">Edit</a> 
+                                            <span class="address">
+                                                {{invoice.parent_id.name}}, 
+                                                {{invoice.name}}
+                                                <br/>
+                                                {{invoice.full_address}}
+                                                <br/>
+                                                <a href="mailto:{{invoice.email}}">{{invoice.email}}</a>
+                                                <br/>
+                                                {{invoice.mobile}}
+                                            </span>
+                                        </div>
+                                        <div class="card-footer">
+                                            {% if order.invoice_address_id == invoice %}
+                                            <a role="button" href="#" class="btn btn-block btn-primary">
+                                                <i class="fa fa-check"></i> Ship to this address
+                                            </a>
+                                            {% else %}
+                                            <a role="button" href="#" class="btn btn-block btn-secondary">
+                                                Select this address
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="col-6 mt-2">
+                                <div data-address_type="invoice" data-address_id="{{request.user.customer.id}}" class="card border {% if order.invoice_address_id == request.user.customer %} border-primary {% else %} js_change_shipping {% endif %}">
+                                    <div class="card-body">
+                                        <a href="/address/{{request.user.customer.id}}/edit" class="btn btn-link float-right">Edit</a> 
+                                        <span class="address">
+                                            {{request.user.customer.name}}
+                                            <br/>
+                                            {{request.user.customer.full_address}}
+                                            <br/>
+                                            <a href="mailto:{{request.user.customer.email}}">{{request.user.customer.email}}</a>
+                                            <br/>
+                                            {{request.user.customer.mobile}}
+                                        </span>
+                                    </div>
+                                    <div class="card-footer">
+                                        {% if order.invoice_address_id == request.user.customer %}
+                                        <a role="button" href="#" class="btn btn-block btn-primary">
+                                            <i class="fa fa-check"></i> Ship to this address
+                                        </a>
+                                        {% else %}
+                                        <a role="button" href="#" class="btn btn-block btn-secondary">
+                                            Select this address
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <a href="/addressInvoice/add" class="btn btn-block btn-info mt-2 mb-2">Add an address</a>
+                    </div>
+                </div>
+                
+                <div id="shipping-info" class="row">
+                    <div class="col-12">
+                        <b>Shipping Information:</b>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            {% for ship in request.user.customer.getChild %}
+                                {% if ship.type == 'delivery' %}
+                                <div class="col-6 mt-2">
+                                    <div data-address_type="ship" data-address_id="{{ship.id}}" class="card border {% if order.shipping_address_id == ship %} border-primary {% else %} js_change_shipping {% endif %}">
+                                        <div class="card-body">
+                                            <a href="/address/{{ship.id}}/edit" class="btn btn-link float-right">Edit</a>
+                                            <span class="address">
+                                                {{ship.parent_id.name}}, 
+                                                {{ship.name}}
+                                                <br/>
+                                                {{ship.full_address}}
+                                                <br/>
+                                                <a href="mailto:{{ship.email}}">{{ship.email}}</a>
+                                                <br/>
+                                                {{ship.mobile}}
+                                            </span>
+                                        </div>
+                                        <div class="card-footer">
+                                            {% if order.shipping_address_id == ship %}
+                                            <a role="button" href="#" class="btn btn-block btn-primary">
+                                                <i class="fa fa-check"></i> Ship to this address
+                                            </a>
+                                            {% else %}
+                                            <a role="button" href="#" class="btn btn-block btn-secondary">
+                                                Select this address
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="col-6 mt-2">
+                                <div data-address_type="ship" data-address_id="{{request.user.customer.id}}" class="card border {% if order.shipping_address_id == request.user.customer %} border-primary {% else %} js_change_shipping {% endif %}">
+                                    <div class="card-body">
+                                        <a href="/address/{{request.user.customer.id}}/edit" class="btn btn-link float-right">Edit</a> 
+                                        <span class="address">
+                                            {{request.user.customer.name}}
+                                            <br/>
+                                            {{request.user.customer.full_address}}
+                                            <br/>
+                                            <a href="mailto:{{request.user.customer.email}}">{{request.user.customer.email}}</a>
+                                            <br/>
+                                            {{request.user.customer.mobile}}
+                                        </span>
+                                    </div>
+                                    <div class="card-footer">
+                                        {% if order.shipping_address_id == request.user.customer %}
+                                        <a role="button" href="#" class="btn btn-block btn-primary">
+                                            <i class="fa fa-check"></i> Ship to this address
+                                        </a>
+                                        {% else %}
+                                        <a role="button" href="#" class="btn btn-block btn-secondary">
+                                            Select this address
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <a href="/addressShip/add" class="btn btn-block btn-info mt-2 mb-2">Add an address</a>
+                    </div>
+                </div>
+                <hr>
+                <a href="/checkout/" class="btn btn-success btn-block no-decoration">Continue</a>
+                <!-- <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue"> -->
+            </form>
         </div>
-        {% endif %}
-    {% endfor %}
+        </div>
+        
+    </div>
+
+    <div class="col-lg-4">
+        <div class="box-element">
+            <a  class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
+            <hr>
+            <h3>Order Summary</h3>
+            <hr>
+            {% for line in lines %}
+            <div class="cart-row">
+                <div style="flex:2"><img class="row-image" src="{{line.product_id.imageURL}}"></div>
+                <div style="flex:2"><p>{{line.product_id.name}}</p></div>
+                <div style="flex:2"><p>${{line.unit_price|floatformat:2}}</p></div>
+                <div style="flex:1"><p>{{line.product_qty}}</p></div>
+            </div>
+            {% endfor %}
+            <h5>Items:   {{order.getQuantity}}</h5>
+            <h5>Total:   ${{order.getTotal|floatformat:2}}</h5>
+        </div>
+    </div>
 </div>
 {% endblock content %}

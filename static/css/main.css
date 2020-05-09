@@ -101,3 +101,13 @@ h1,h2,h3,h4,h5,h6{
 .hidden{
 	display: none!important;
 }
+
+
+a.no-decoration{
+	cursor: pointer;
+    text-decoration: none !important;
+}
+
+.js_change_shipping{
+	cursor: pointer;
+}
