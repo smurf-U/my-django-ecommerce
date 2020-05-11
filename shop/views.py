@@ -102,7 +102,7 @@ def updateOrderAddress(request, **kwarg):
     return JsonResponse('', safe=False)
 
 def getCart(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and hasattr(request.user, 'customer'):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer_id=customer, state='draft')
         lines = order.orderlines_set.all()
