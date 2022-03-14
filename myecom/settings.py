@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'pybrake.django.AirbrakeMiddleware',
 ]
 
 ROOT_URLCONF = 'myecom.urls'
@@ -79,14 +80,14 @@ WSGI_APPLICATION = 'myecom.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'my_ecom',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'my_ecom',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'postgres',
+        # 'HOST': 'localhost',
+        # 'PORT': '5432',
     }
 }
 
@@ -138,3 +139,25 @@ MEDIA_URL = '/filestore/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'filestore')
 STATIC_ROOT = os.path.join(BASE_DIR, 'filestore/static/')
 
+AIRBRAKE = dict(
+    project_id=403427,
+    project_key='7c86d44ba5e07210e22be9a3b49e680d',
+)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'airbrake': {
+            'level': 'ERROR',
+            'class': 'pybrake.LoggingHandler',
+        },
+    },
+    'loggers': {
+        'app': {
+            'handlers': ['airbrake'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}

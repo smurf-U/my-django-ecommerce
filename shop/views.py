@@ -6,6 +6,7 @@ from .forms import AddressForm
 
 def shop(request):
     context = {}
+    5/0
     products = Product.objects.filter(sale_ok=True, active=True)
     res = getCart(request)
     context.update({'products': products})
